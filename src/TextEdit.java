@@ -2,6 +2,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class TextEdit implements ActionListener {
     JFrame frame;
@@ -22,11 +23,12 @@ public class TextEdit implements ActionListener {
         menuBar.add(edit);
 
         frame.setJMenuBar(menuBar);
+        //initializing textarea
 
         textarea=new  JTextArea();
         frame.add(textarea);
 
-        //initialise menuitems
+        //initialise menuitems to file
         newFile=new JMenuItem("New File");
         openFile=new JMenuItem("Open File");
         saveFile=new JMenuItem("Save File");
@@ -38,6 +40,7 @@ public class TextEdit implements ActionListener {
         file.add(newFile);
         file.add(openFile);
         file.add(saveFile);
+        //initialise menuitems to edit
 
         cut=new JMenuItem("cut");
         copy=new JMenuItem("Copy");
@@ -73,12 +76,47 @@ public class TextEdit implements ActionListener {
     }
     public void actionPerformed(ActionEvent e){
         if(e.getSource()==newFile){
+            TextEdit newtexteditor= new TextEdit();
 
         }
         if(e.getSource()==saveFile){
+            JFileChooser fileChooser=new JFileChooser("C:");
+            fileChooser.setApproveButtonText("Save");
+            int chooseoption=fileChooser.showSaveDialog(null);
+
+            if(chooseoption==JFileChooser.APPROVE_OPTION){
+                File file=new File(fileChooser.getSelectedFile().getAbsolutePath()+".txt");
+                String filepath=file.getPath();
+                try{
+                    BufferedWriter outfile=null;
+                    outfile =new BufferedWriter(new FileWriter(file));
+                    textarea.write(outfile);
+                    outfile.close();
+                }catch(Exception exception){
+                    System.out.println(exception);
+                }
+            }
 
         }
         if(e.getSource()==openFile){
+            JFileChooser fileChooser=new JFileChooser("C:");
+            int chooseoption=fileChooser.showOpenDialog(null);
+
+            if(chooseoption==JFileChooser.APPROVE_OPTION){
+                File file=fileChooser.getSelectedFile();
+                String filepath=file.getPath();
+
+                try{
+                    BufferedReader bufferedreader=new BufferedReader(new FileReader(filepath));
+                    String intermmediate="",output="";
+                    while((intermmediate=bufferedreader.readLine())!=null){
+                        output+=intermmediate+"\n";
+                    }
+                    textarea.setText(output);
+                }catch (Exception exception){
+                    System.out.println(exception);
+                }
+            }
 
         }
         if(e.getSource()==cut){
